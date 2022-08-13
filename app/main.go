@@ -5,6 +5,7 @@ import (
 	"github.com/elazarl/goproxy/ext/auth"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func filterIP(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
@@ -28,7 +29,9 @@ func getHandleConnect() goproxy.HttpsHandler {
 	return goproxy.FuncHttpsHandler(func(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
 		log.Println("CONNECT REQ", host, " FROM ", ctx.Req.RemoteAddr)
 
-		_, _ = auth.BasicConnect("realm", zulUserPass).HandleConnect(host, ctx)
+		if !strings.HasPrefix(ctx.Req.RemoteAddr, "140.213") {
+			return auth.BasicConnect("realm", zulUserPass).HandleConnect(host, ctx)
+		}
 		return goproxy.OkConnect, host
 	})
 }
