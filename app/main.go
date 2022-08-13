@@ -14,29 +14,33 @@ func filterIP(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Re
 	return req, nil
 }
 
+func zulUserPass(user, passwd string) bool {
+	if user == "zulkan" || passwd == "zulkan" {
+		return true
+	}
+	return false
+}
+
 type handleConnect struct {
 }
 
-func (h *handleConnect) HandleConnect(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
-	log.Println("CONNECT REQ", host, " FROM ", ctx.Req.RemoteAddr)
-
-	return goproxy.OkConnect, host
-}
-
 func getHandleConnect() goproxy.HttpsHandler {
-	return &handleConnect{}
+	return goproxy.FuncHttpsHandler(func(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
+		log.Println("CONNECT REQ", host, " FROM ", ctx.Req.RemoteAddr)
+
+		_, _ = auth.BasicConnect("realm", zulUserPass).HandleConnect(host, ctx)
+		return goproxy.OkConnect, host
+	})
 }
+
+//func getHandleConnect() goproxy.HttpsHandler {
+//	return &handleConnect{}
+//}
 
 func main() {
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.Verbose = true
 
-	auth.ProxyBasic(proxy, "Bearer", func(user, passwd string) bool {
-		if user == "zulkan" || passwd == "zulkan" {
-			return true
-		}
-		return false
-	})
 	proxy.OnRequest().DoFunc(filterIP)
 	proxy.OnRequest().HandleConnect(getHandleConnect())
 
