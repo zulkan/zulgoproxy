@@ -48,6 +48,9 @@ WORKDIR /root/
 # Copy the binary from backend builder
 COPY --from=backend-builder /app/zulgoproxy .
 
+# Copy config example file
+COPY config.yaml ./config.yaml
+
 # Expose the ports the app runs on
 EXPOSE 8181 8182
 
