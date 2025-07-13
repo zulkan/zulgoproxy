@@ -21,6 +21,9 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8181
+              name: proxy
+            - containerPort: 8182
+              name: api
 
 ---
 apiVersion: v1
@@ -31,8 +34,14 @@ spec:
   selector:
     app: zulgoproxy
   ports:
-    - protocol: TCP
+    - name: proxy
+      protocol: TCP
       port: 8181         # Service port inside cluster
       targetPort: 8181   # Container port in the Pod
-      nodePort: 30181    # External port on the node (optional, you can omit to let K8s pick)
+      nodePort: 30181    # External port on the node
+    - name: api
+      protocol: TCP
+      port: 8182         # Service port inside cluster
+      targetPort: 8182   # Container port in the Pod
+      nodePort: 30182    # External port on the node
   type: NodePort
