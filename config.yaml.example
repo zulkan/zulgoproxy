@@ -1,0 +1,23 @@
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: postgres
+  dbname: zulgoproxy
+  sslmode: disable
+
+server:
+  port: 8181
+  allowed_ips:
+    - "140.213.0.0/16"
+    - "127.0.0.1"
+    - "::1"
+  log_level: info
+  enable_https: false
+  cert_file: ""
+  key_file: ""
+
+auth:
+  jwt_secret: "your-super-secret-jwt-key-change-this-in-production"
+  token_expiry: 24    # hours
+  refresh_expiry: 168 # hours (7 days)
