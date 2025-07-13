@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zulgoproxy
+  labels:
+    app: zulgoproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zulgoproxy
+  template:
+    metadata:
+      labels:
+        app: zulgoproxy
+    spec:
+      containers:
+        - name: zulgoproxy
+          image: localhost/zulgoproxy:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8181
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zulgoproxy
+spec:
+  selector:
+    app: zulgoproxy
+  ports:
+    - protocol: TCP
+      port: 8181         # Service port inside cluster
+      targetPort: 8181   # Container port in the Pod
+      nodePort: 30181    # External port on the node (optional, you can omit to let K8s pick)
+  type: NodePort
