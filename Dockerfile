@@ -16,7 +16,7 @@ COPY ui/ ./
 RUN npm run build
 
 # Go build stage
-FROM golang:1.18-alpine AS backend-builder
+FROM golang:1.19-alpine AS backend-builder
 
 # Set the working directory
 WORKDIR /app
